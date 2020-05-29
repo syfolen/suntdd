@@ -23,26 +23,33 @@ module suntdd {
          * 启动回调
          * export
          */
-        protected $onRun(): void {
+        constructor() {
+            super(0);
             this.facade.registerObserver(suncom.NotifyKey.TEST_RECV, this.$onTestRecv, this);
             this.facade.registerObserver(suncom.NotifyKey.TEST_EVENT, this.$onTestEvent, this);
             this.facade.registerObserver(suncom.NotifyKey.REMOVE_ALL_BUTTONS_AND_SIGNALS, this.$onRemoveAllButtonsAndSignals, this);
+            this.facade.registerObserver(suncore.NotifyKey.ENTER_FRAME, this.$onEnterFrame, this);
         }
 
         /**
          * 停止回调
          * export
          */
-        protected $onStop(): void {
+        destroy(): void {
+            if (this.$destroyed === true) {
+                return;
+            }
+            super.destroy();
             this.facade.removeObserver(suncom.NotifyKey.TEST_RECV, this.$onTestRecv, this);
             this.facade.removeObserver(suncom.NotifyKey.TEST_EVENT, this.$onTestEvent, this);
             this.facade.removeObserver(suncom.NotifyKey.REMOVE_ALL_BUTTONS_AND_SIGNALS, this.$onRemoveAllButtonsAndSignals, this);
+            this.facade.removeObserver(suncore.NotifyKey.ENTER_FRAME, this.$onEnterFrame, this);
         }
 
         /**
-         * 帧循环事件（请重写此方法来替代ENTER_FRAME事件）
+         * 帧循环事件
          */
-        protected $frameLoop(): void {
+        protected $onEnterFrame(): void {
             if (this.$actions.length > 0) {
                 const cfg: ITestActionCfg = this.$actions[0];
                 if (cfg.seqId === this.$currentTestSeqId && this.$doTestAction(cfg) === true) {
@@ -54,7 +61,7 @@ module suntdd {
                     return;
                 }
             }
-            super.$frameLoop();
+            super.$onEnterFrame();
 
             if (this.$actions.length === 0 && this.$packets.length === 0) {
                 this.facade.sendNotification(suncom.NotifyKey.TEST_CASE_DONE);
@@ -78,7 +85,7 @@ module suntdd {
                         if (packet.waitName === protocal.Name && packet.waitTimes > 0) {
                             packet.waitCount++;
                             if (packet.waitCount === packet.waitTimes) {
-                                this.$frameLoop();
+                                this.$onEnterFrame();
                             }
                         }
                     }
@@ -105,9 +112,15 @@ module suntdd {
          */
         private $doEmitSignal(cfg: ITestActionCfg): boolean {
             const data: ISignalData = cfg.data;
+            if (data.emitTime === void 0) {
+                data.emitTime = suncore.System.getModuleTimestamp(suncore.ModuleEnum.SYSTEM) + data.delay;
+            }
+            if (suncore.System.getModuleTimestamp(suncore.ModuleEnum.SYSTEM) < data.emitTime) {
+                return false;
+            }
             if (data.period === 0) {
                 data.period = 1;
-                suncore.System.addMessage(suncore.ModuleEnum.SYSTEM, suncore.MessagePriorityEnum.PRIORITY_0, suncom.Handler.create(this, this.$emitSignalEx, [cfg.id, data.args, data]));
+                this.$emitSignalEx(cfg.id, data.args, data);
             }
             return data.period === 2;
         }
@@ -149,7 +162,7 @@ module suntdd {
                         this.$clickButton(id, kind, arg0);
                         break;
                     case suncom.TestActKindEnum.SIGNAL_EMIT:
-                        this.$emitSignal(id, kind, arg0, arg1);
+                        this.$emitSignal(id, kind, arg0, arg1, arg2);
                         break;
                     case suncom.TestActKindEnum.SIGNAL_WAIT:
                         this.$waitSignal(id, kind, arg0, arg1, arg2);
@@ -189,15 +202,18 @@ module suntdd {
 
         /**
          * 发射信号
-         * @line: 为true时进入队列，为false时立即发射
+         * @line: 为true时进入队列，为false时立即发射，默认为：false
          */
-        private $emitSignal(id: number, kind: suncom.TestActKindEnum, args: any, line: boolean): void {
+        private $emitSignal(id: number, kind: suncom.TestActKindEnum, args: any, line: boolean, delay: number): void {
             const data: ISignalData = {
                 args: args,
+                delay: delay,
                 period: 0
             };
             if (line === false) {
-                suncore.System.addMessage(suncore.ModuleEnum.SYSTEM, suncore.MessagePriorityEnum.PRIORITY_0, suncom.Handler.create(this, this.$emitSignalEx, [id, args, data]));
+                suncore.System.addTimer(suncore.ModuleEnum.SYSTEM, delay, () => {
+                    this.$emitSignalEx(id, args, data);
+                }, this);
             }
             else {
                 const cfg: ITestActionCfg = this.$createTestActionCfg(id, kind);
@@ -212,10 +228,10 @@ module suntdd {
             // 响应队列中的回调
             if (this.$actions.length > 0) {
                 const cfg: ITestActionCfg = this.$actions[0];
-                if (cfg.id === id && cfg.kind === suncom.TestActKindEnum.SIGNAL_WAIT) {
+                if (cfg.id === id && cfg.seqId === this.$currentTestSeqId && cfg.kind === suncom.TestActKindEnum.SIGNAL_WAIT) {
                     suncom.Test.expect(this.$signalMap[id]).interpret("一个信号不允许同时存在多个回调").toBeUndefined();
                     const handler: suncom.IHandler = cfg.data.handler || null;
-                    if (handler === null || handler.runWith(args) !== true) {
+                    if (handler === null || handler.runWith(args) !== false) {
                         data.period = 2;
                         this.$actions.shift();
                         this.$currentTestSeqId++;
@@ -227,7 +243,7 @@ module suntdd {
             const sData: ISignalData = this.$signalMap[id] || null;
             if (sData !== null) {
                 const handler: suncom.IHandler = sData.handler || null;
-                if (handler === null || handler.runWith(args) !== true) {
+                if (handler === null || handler.runWith(args) !== false) {
                     data.period = 2;
                     if (sData.once === true) {
                         delete this.$signalMap[id];

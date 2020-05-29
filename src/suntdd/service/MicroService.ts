@@ -3,7 +3,7 @@ module suntdd {
     /**
      * export
      */
-    export abstract class MicroService extends suncore.BaseService {
+    export abstract class MicroService extends puremvc.Notifier {
         /**
          * 测试序号种子
          */
@@ -25,9 +25,9 @@ module suntdd {
         protected $timeDiff: number = suncom.Common.random(-8000, 8000);
 
         /**
-         * 帧循环事件（请重写此方法来替代ENTER_FRAME事件）
+         * 帧循环事件
          */
-        protected $frameLoop(): void {
+        protected $onEnterFrame(): void {
             while (this.$packets.length > 0) {
                 const packet: IMSWSPacket = this.$packets[0];
                 let success: boolean = false;
