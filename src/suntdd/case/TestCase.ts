@@ -1,0 +1,127 @@
+
+module suntdd {
+    /**
+     * 测试用例抽象类
+     * 说明：
+     * 1. 同一时间只会有一个测试用例被运行
+     * export
+     */
+    export abstract class TestCase extends puremvc.Notifier {
+        /**
+         * 测试用例编号
+         * export
+         */
+        protected $caseId: number;
+
+        /**
+         * @caseId: 测试用例ID
+         * export
+         */
+        constructor(caseId: number) {
+            super(0);
+            this.$caseId = caseId;
+            this.$beforeAll();
+        }
+
+        /**
+         * 新增测试用例
+         * @regOption: 默认为：APPEND
+         * export
+         */
+        protected $addTest(tcId: number, taskCls: new (tcId: number) => TestCase, regOption: TestCaseRegOptionEnum = TestCaseRegOptionEnum.APPEND): void {
+            const cfg: ITestCaseCfg = {
+                tcId: tcId,
+                taskCls: taskCls
+            };
+            if (regOption === TestCaseRegOptionEnum.APPEND) {
+                M.tccQueue.push(cfg);
+            }
+            else {
+                M.tccQueue.unshift(cfg);
+            }
+        }
+
+        /**
+         * 测试描述
+         * export
+         */
+        protected $describe(str: string): void {
+            if (suncom.Global.debugMode & suncom.DebugMode.TDD) {
+                suncom.Logger.log(suncom.DebugMode.TDD, str);
+            }
+        }
+
+        /**
+         * 在所有脚本执行以前
+         * export
+         */
+        protected $beforeAll(): void {
+
+        }
+
+        /**
+         * 在所有脚本执行以后
+         * export
+         */
+        protected $afterAll(): void {
+
+        }
+
+        /**
+         * 发射信号
+         * @delay: 信号发射延时
+         */
+        protected $emit(id: number, args?: any, delay: number = 0): void {
+            this.facade.sendNotification(NotifyKey.EMIT, [id, args, true, delay]);
+        }
+
+        /**
+         * 等待信号
+         * @line: 是否进入队列，若为false，则必须指定handler，默认：true
+         * @once: 是否只响应一次，若line为true，则once必然为true，默认为：true
+         */
+        protected $wait(id: number, handler: suncom.IHandler, line: boolean = true, once: boolean = true): void {
+            if (line === true) {
+                once = true;
+            }
+            else {
+                suncom.Test.expect(handler).interpret(`当参数line为false时必须指定handler`).toBeInstanceOf(suncom.Handler);
+            }
+            this.facade.sendNotification(NotifyKey.WAIT, [id, handler, line, once]);
+        }
+
+        /**
+         * 点击按钮
+         * 说明：
+         * 1. 按钮的点击会延时500毫秒执行
+         */
+        protected $click(id: number): void {
+            this.facade.sendNotification(NotifyKey.CLICK, id);
+        }
+
+        /**
+         * 功能有二：
+         * 1. 取消信号的监听
+         * 2. 注销按钮的注册
+         * 说明：
+         * 1. 在队列中的信号监听无法取消
+         */
+        protected $cancel(id: number): void {
+            this.facade.sendNotification(NotifyKey.CANCEL, id);
+        }
+
+        /**
+         * 序列化WebSocket状态数据包
+         */
+        protected $serializeWebSocketStatePacket(): void {
+
+        }
+
+        /**
+         * 序列化WebSocket协议数据包
+         */
+        protected $serializeWebSocketProtocalPacket(): void {
+
+        }
+    }
+}

@@ -1,25 +1,17 @@
 
 module suntdd {
-
+    /**
+     * 行为接口
+     */
     export interface ITestActionCfg {
         /**
-         * 测试ID
+         * 行为类型
          */
-        id: number;
+        kind: TestActKindEnum;
 
         /**
-         * 序列号
+         * 行为配置
          */
-        seqId: number;
-
-        /**
-         * 测试动作类型
-         */
-        kind: suncom.TestActKindEnum;
-
-        /**
-         * 自定义数据
-         */
-        data: any;
+        cfg: ICfg;
     }
 }

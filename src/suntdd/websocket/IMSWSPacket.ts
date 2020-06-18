@@ -1,10 +1,10 @@
 
 module suntdd {
     /**
-     * 微服务器WebSocket数据包
+     * 微服务器WebSocket数据包接口
      * 说明：
      * 1. 若不默认任何配置项，则消息以逐帧的形式进行派发
-     * 2. 若指定的网络连接不正在，则数据包不会被处理
+     * 2. 若指定的网络连接不存在，则数据包不会被处理
      * export
      */
     export interface IMSWSPacket {
@@ -24,7 +24,7 @@ module suntdd {
         connName?: string;
 
         /**
-         * 数据包产生时间
+         * 生成数据包的时间戳
          */
         createTime?: number;
 
