@@ -46,9 +46,7 @@ module suntdd {
          * export
          */
         protected $describe(str: string): void {
-            if (suncom.Global.debugMode & suncom.DebugMode.TDD) {
-                suncom.Logger.log(suncom.DebugMode.TDD, str);
-            }
+            suncom.Logger.log(suncom.DebugMode.TDD, str);
         }
 
         /**
@@ -70,6 +68,7 @@ module suntdd {
         /**
          * 发射信号
          * @delay: 信号发射延时
+         * export
          */
         protected $emit(id: number, args?: any, delay: number = 0): void {
             this.facade.sendNotification(NotifyKey.EMIT, [id, args, true, delay]);
@@ -79,6 +78,7 @@ module suntdd {
          * 等待信号
          * @line: 是否进入队列，若为false，则必须指定handler，默认：true
          * @once: 是否只响应一次，若line为true，则once必然为true，默认为：true
+         * export
          */
         protected $wait(id: number, handler: suncom.IHandler, line: boolean = true, once: boolean = true): void {
             if (line === true) {
@@ -94,6 +94,7 @@ module suntdd {
          * 点击按钮
          * 说明：
          * 1. 按钮的点击会延时500毫秒执行
+         * export
          */
         protected $click(id: number): void {
             this.facade.sendNotification(NotifyKey.CLICK, id);
@@ -105,6 +106,7 @@ module suntdd {
          * 2. 注销按钮的注册
          * 说明：
          * 1. 在队列中的信号监听无法取消
+         * export
          */
         protected $cancel(id: number): void {
             this.facade.sendNotification(NotifyKey.CANCEL, id);
@@ -112,16 +114,19 @@ module suntdd {
 
         /**
          * 序列化WebSocket状态数据包
+         * export
          */
-        protected $serializeWebSocketStatePacket(): void {
-
+        protected $serializeWebSocketStatePacket(packet: suntdd.IMSWSStatePacket): void {
+            this.facade.sendNotification(NotifyKey.SERIALIZE_WEBSOCKET_STATE_PACKET, packet);
         }
 
         /**
          * 序列化WebSocket协议数据包
+         * export
          */
-        protected $serializeWebSocketProtocalPacket(): void {
-
+        protected $serializeWebSocketProtocalPacket(packet: suntdd.IMSWSProtocalPacket, data?: any, timeFields?: string[], hashFields?: string[]): void {
+            packet.data = data;
+            this.facade.sendNotification(NotifyKey.SERIALIZE_WEBSOCKET_STATE_PACKET, [packet, timeFields, hashFields]);
         }
     }
 }

@@ -10,6 +10,11 @@ module suntdd {
         actTime?: number;
 
         /**
+         * 是否己执行
+         */
+        done?: boolean;
+
+        /**
          * 是否己取消
          */
         canceled?: boolean;

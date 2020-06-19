@@ -3,7 +3,7 @@ module suntdd {
     /**
      * 测试动作类型枚举
      */
-    export enum TestActKindEnum {
+    export enum TestActionKindEnum {
         /**
          * 无
          */
@@ -25,18 +25,13 @@ module suntdd {
         SIGNAL_WAIT,
 
         /**
-         * WebSocket连接状态下行
+         * WebSocket连接状态包
          */
-        WS_STATE_NOTIFY,
+        WS_STATE,
 
         /**
-         * WebSocket协议数据包下行
+         * WebSocket协议数据包
          */
-        WS_PROTOCAL_NOTIFY,
-
-        /**
-         * 协议序列化
-         */
-        PROTOCAL_SERIALIZE
+        WS_PROTOCAL,
     }
 }

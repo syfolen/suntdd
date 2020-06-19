@@ -7,7 +7,7 @@ module suntdd {
         /**
          * 行为类型
          */
-        kind: TestActKindEnum;
+        kind: TestActionKindEnum;
 
         /**
          * 行为配置

@@ -9,16 +9,6 @@ module suntdd {
      */
     export interface IMSWSPacket {
         /**
-         * 数据包类型
-         */
-        kind?: MSWSPacketKindEnum;
-
-        /**
-         * 测试序号
-         */
-        seqId: number;
-
-        /**
          * 网络连接包字，默认为：default
          */
         connName?: string;

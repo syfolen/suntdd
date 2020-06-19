@@ -13,7 +13,6 @@ module suntdd {
 
         /**
          * 下行的数据内容，默认为：null
-         * export
          */
         data?: any;
 
@@ -24,18 +23,18 @@ module suntdd {
         repeatTimes?: number;
 
         /**
+         * 哈希字段
+         * 说明：
+         * 1. 未指定值的哈希字段会在数据下行时被写入一个有效哈希值
+         */
+        hashFileds: string[];
+
+        /**
          * 时间戳字段
          * 说明：
          * 1. 时间戳字段会在数据下行时写入服务端的即时时间
          * 2. 若该字段己存在值，则该值会被认为是时间偏移
          */
         timeFields: suncom.IPCMIntString[];
-
-        /**
-         * 哈希字段
-         * 说明：
-         * 1. 未指定值的哈希字段会在数据下行时被写入一个有效哈希值
-         */
-        hashFileds: string[];
     }
 }

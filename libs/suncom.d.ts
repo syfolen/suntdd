@@ -486,6 +486,25 @@ declare module suncom {
      * 常用库（纯JS方法）
      */
     namespace Common {
+        /**
+         * PI
+         */
+        const PI: number;
+
+        /**
+         * 2PI
+         */
+        const PI2: number;
+
+        /**
+         * 整数的最大安全值
+         */
+        const MAX_SAFE_INTEGER: number;
+
+        /**
+         * 整数的最小安全值
+         */
+        const MIN_SAFE_INTEGER: number;
 
         /**
          * 获取全局唯一的哈希值
@@ -523,6 +542,21 @@ declare module suncom {
          * 格式化字符串
          */
         function formatString(str: string, args: any[]): string;
+
+        /**
+         * 格式化字符串
+         */
+        function formatString$(str: string, args: any[]): string;
+
+        /**
+         * 角度换算为弧度
+         */
+        function d2r(d: number): number;
+
+        /**
+         * 弧度换算为角度
+         */
+        function r2d(a: number): number;
 
         /**
          * 将value限制于min和max之间
@@ -753,34 +787,6 @@ declare module suncom {
     }
 
     /**
-     * 命令定义
-     */
-    namespace NotifyKey {
-        /**
-         * 测试事件
-         * 说明：
-         * 1. 参数不定
-         */
-        const TEST_EVENT: string;
-
-        /**
-         * 测试上行协议 { id: number, act: string, out: suncore.ITestSeqInfo }
-         * @act: "exe" or "reg", exe为执行下行行为，reg为注册下行行为
-         */
-        const TEST_RECV: string;
-
-        /**
-         * 移除所有测试按钮和处于等待的测试信号 { none }
-         */
-        const REMOVE_ALL_BUTTONS_AND_SIGNALS: string;
-
-        /**
-         * 用例测试完成 { none }
-         */
-        const TEST_CASE_DONE: string;
-    }
-
-    /**
      * 对象池
      */
     namespace Pool {
@@ -839,11 +845,6 @@ declare module suncom {
         let ASSERT_BREAKPOINT: boolean;
 
         /**
-         * 启用微服务器，默认为：false
-         */
-        let ENABLE_MICRO_SERVER: boolean;
-
-        /**
          * 期望测试
          */
         function expect(value: any, description?: string): IExpect;
@@ -862,47 +863,5 @@ declare module suncom {
          * 测试表达式是否为false
          */
         function assertFalse(value: boolean, message?: string): void;
-
-        /**
-         * 等待信号，同一时间只允许监听一个测试信号
-         * @line: 是否进入测试队列，若为false，则需要指定handler，默认为：true
-         * 说明：
-         * 1. 这个方法只允许在suncore.TestTask中使用
-         */
-        function wait(id: number, handler?: IHandler, line?: boolean, once?: boolean): void;
-
-        /**
-         * 发射信号
-         * @line: 是否进入测试队列，若为false，则需要指定handler，默认为：false
-         * @delay: 信号发射延时
-         */
-        function emit(id: number, args?: any, line?: boolean, delay?: number): void;
-
-        /**
-         * 点击按钮
-         * @event: 默认为：Laya.Event.CLICK
-         * 说明：
-         * 1. 按钮的点击会延时500毫秒执行
-         */
-        function click(id: number, event?: string | Laya.Event): void;
-
-        /**
-         * 注册按钮
-         * @id: 按钮编号，若为-1则清除所有按钮
-         * @once: 一次性的按钮，默认为：true
-         */
-        function regButton(id: number, button?: any, once?: boolean): void;
-
-        /**
-         * 序列化WebSocket状态包
-         */
-        function serializeWebSocketStatePacket(packet: suntdd.IMSWSStatePacket): void;
-
-        /**
-         * 序列化WebSocket协议包
-         * @timeFileds: 若有值，则视为时间偏移
-         * @hashFileds: 无论是否有值，哈希值均会被重写
-         */
-        function serializeWebSocketProtocalPacket(packet: suntdd.IMSWSProtocalPacket, timeFields?: string[], hashFields?: string[]): void;
     }
 }

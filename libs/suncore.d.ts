@@ -517,9 +517,12 @@ declare module suncore {
 
         /**
          * 添加任务
-         * @groupId: 不同编组并行执行
+         * @groupId: 不同编组并行执行，若为-1，则自动给预一个groupId
+         * @return: 返回任务的groupId，若为-1，则说明任务添加失败
+         * 说明：
+         * 1. 自定义的groupId的值不允许超过1000
          */
-        function addTask(mod: ModuleEnum, groupId: number, task: ITask): void;
+        function addTask(mod: ModuleEnum, groupId: number, task: ITask): number;
 
         /**
          * 取消任务

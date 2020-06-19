@@ -9,6 +9,6 @@ module suntdd {
          * WebSocket状态
          * export
          */
-        state: sunnet.MSWSStateEnum;
+        state: MSWSStateEnum;
     }
 }

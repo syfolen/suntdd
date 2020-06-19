@@ -23,10 +23,5 @@ module suntdd {
          * 是否只响应一次
          */
         once: boolean;
-
-        /**
-         * 是否己执行，默认为：false
-         */
-        done?: boolean;
     }
 }
