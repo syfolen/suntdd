@@ -16,7 +16,7 @@ module suntdd {
                 this.$doEmit();
             }
             else {
-                suncore.System.addTimer(suncore.ModuleEnum.SYSTEM, 500, this.$doEmit, this);
+                suncore.System.addTimer(suncore.ModuleEnum.SYSTEM, cfg.delay, this.$doEmit, this);
             }
         }
 
@@ -46,6 +46,7 @@ module suntdd {
                 }
             }
 
+            this.$cfg.done = true;
             M.currentSignalId = 0;
         }
     }

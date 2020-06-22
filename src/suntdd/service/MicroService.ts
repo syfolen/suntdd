@@ -15,12 +15,16 @@ module suntdd {
         constructor() {
             super(0);
             M.timeDiff = suncom.Common.random(-8000, 8000);
+            if (suncore.System.isModuleStopped(suncore.ModuleEnum.SYSTEM) === true) {
+                throw Error(`微服务器未运行，因为SYSTEM时间轴未开启`);
+            }
         }
 
         /**
          * export
          */
         protected $onRun(): void {
+            this.facade.registerCommand(NotifyKey.EMIT, EmitCommand);
             this.facade.registerCommand(NotifyKey.WAIT, WaitCommand);
             this.facade.registerCommand(NotifyKey.CLICK, ClickCommand);
             this.facade.registerCommand(NotifyKey.CANCEL, CancelCommand);
@@ -41,6 +45,7 @@ module suntdd {
          * export
          */
         protected $onStop(): void {
+            this.facade.removeCommand(NotifyKey.EMIT);
             this.facade.removeCommand(NotifyKey.WAIT);
             this.facade.removeCommand(NotifyKey.CLICK);
             this.facade.removeCommand(NotifyKey.CANCEL);
@@ -118,6 +123,21 @@ module suntdd {
                         }
                     }
                 }
+            }
+
+            if (this.$actions.length > 0) {
+                return;
+            }
+            if (M.currentTestCase === null) {
+                const cfg: ITestCaseCfg = M.tccQueue.shift() || null;
+                M.currentTestCase = cfg === null ? null : new cfg.taskCls(cfg.tcId);
+            }
+            else if (M.currentTestCase.status === TestCaseStatusEnum.EXECUTE) {
+                M.currentTestCase.done();
+            }
+            else if (M.currentTestCase.status === TestCaseStatusEnum.FINISH) {
+                suncom.Test.expect(this.$actions.length).toBe(0);
+                M.currentTestCase = null;
             }
         }
 
@@ -263,8 +283,6 @@ module suntdd {
             }
             if (cfg.actTime === void 0) {
                 cfg.actTime = suncore.System.getModuleTimestamp(suncore.ModuleEnum.SYSTEM);
-            }
-            if (cfg.actTime === suncore.System.getModuleTimestamp(suncore.ModuleEnum.SYSTEM)) {
                 this.facade.sendNotification(NotifyKey.DO_EMIT, cfg);
             }
             else {
@@ -283,8 +301,6 @@ module suntdd {
             }
             if (cfg.actTime === void 0) {
                 cfg.actTime = suncore.System.getModuleTimestamp(suncore.ModuleEnum.SYSTEM);
-            }
-            if (cfg.actTime === suncore.System.getModuleTimestamp(suncore.ModuleEnum.SYSTEM)) {
                 this.$addWait(cfg);
             }
             else {

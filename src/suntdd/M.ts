@@ -15,6 +15,11 @@ module suntdd {
         export let currentSignalId: number = 0;
 
         /**
+         * 当前正在执行的测试用例
+         */
+        export let currentTestCase: TestCase = null;
+
+        /**
          * 测试用例配置列表 
          */
         export const tccQueue: ITestCaseCfg[] = [];

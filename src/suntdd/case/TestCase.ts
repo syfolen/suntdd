@@ -14,12 +14,34 @@ module suntdd {
         protected $caseId: number;
 
         /**
+         * 测试用例状态
+         */
+        private $status: TestCaseStatusEnum = TestCaseStatusEnum.PREPARE;
+
+        /**
          * @caseId: 测试用例ID
          * export
          */
         constructor(caseId: number) {
             super(0);
             this.$caseId = caseId;
+            M.currentTestCase = this;
+            suncore.System.addMessage(suncore.ModuleEnum.SYSTEM, suncore.MessagePriorityEnum.PRIORITY_0, suncom.Handler.create(this, this.$doPrepare));
+        }
+
+        /**
+         * 完成测试
+         */
+        done(): void {
+            this.$afterAll();
+            this.$status = TestCaseStatusEnum.FINISH;
+        }
+
+        /**
+         * 准备测试用例
+         */
+        private $doPrepare(): void {
+            this.$status = TestCaseStatusEnum.EXECUTE;
             this.$beforeAll();
         }
 
@@ -76,11 +98,12 @@ module suntdd {
 
         /**
          * 等待信号
+         * @handler: 若line为false，则必须为handler指定值
          * @line: 是否进入队列，若为false，则必须指定handler，默认：true
          * @once: 是否只响应一次，若line为true，则once必然为true，默认为：true
          * export
          */
-        protected $wait(id: number, handler: suncom.IHandler, line: boolean = true, once: boolean = true): void {
+        protected $wait(id: number, handler: suncom.IHandler = null, line: boolean = true, once: boolean = true): void {
             if (line === true) {
                 once = true;
             }
@@ -127,6 +150,13 @@ module suntdd {
         protected $serializeWebSocketProtocalPacket(packet: suntdd.IMSWSProtocalPacket, data?: any, timeFields?: string[], hashFields?: string[]): void {
             packet.data = data;
             this.facade.sendNotification(NotifyKey.SERIALIZE_WEBSOCKET_STATE_PACKET, [packet, timeFields, hashFields]);
+        }
+
+        /**
+         * 测试用例状态
+         */
+        get status(): TestCaseStatusEnum {
+            return this.$status;
         }
     }
 }
