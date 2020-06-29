@@ -14,7 +14,7 @@ module suntdd {
 
         constructor() {
             super(0);
-            M.timeDiff = suncom.Common.random(-8000, 8000);
+            M.timeDiff = suncom.Mathf.random(-8000, 8000);
             if (suncore.System.isModuleStopped(suncore.ModuleEnum.SYSTEM) === true) {
                 throw Error(`微服务器未运行，因为SYSTEM时间轴未开启`);
             }
