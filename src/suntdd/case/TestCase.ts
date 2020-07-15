@@ -149,7 +149,7 @@ module suntdd {
          */
         protected $serializeWebSocketProtocalPacket(packet: suntdd.IMSWSProtocalPacket, data?: any, timeFields?: string[], hashFields?: string[]): void {
             packet.data = data;
-            this.facade.sendNotification(NotifyKey.SERIALIZE_WEBSOCKET_STATE_PACKET, [packet, timeFields, hashFields]);
+            this.facade.sendNotification(NotifyKey.SERIALIZE_WEBSOCKET_PROTOCAL_PACKET, [packet, timeFields, hashFields]);
         }
 
         /**

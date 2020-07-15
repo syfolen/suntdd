@@ -39,6 +39,8 @@ module suntdd {
             this.facade.registerObserver(NotifyKey.ADD_WAIT, this.$addWait, this);
             this.facade.registerObserver(NotifyKey.ADD_ACTION, this.$addAction, this);
             this.facade.registerObserver(NotifyKey.TEST_WEBSOCKET_SEND_DATA, this.$onWebSocketSendData, this);
+
+            this.facade.registerObserver(suncore.NotifyKey.ENTER_FRAME, this.$onEnterFrame, this);
         }
 
         /**
@@ -60,12 +62,14 @@ module suntdd {
             this.facade.removeObserver(NotifyKey.ADD_WAIT, this.$addWait, this);
             this.facade.removeObserver(NotifyKey.ADD_ACTION, this.$addAction, this);
             this.facade.removeObserver(NotifyKey.TEST_WEBSOCKET_SEND_DATA, this.$onWebSocketSendData, this);
+
+            this.facade.removeObserver(suncore.NotifyKey.ENTER_FRAME, this.$onEnterFrame, this);
         }
 
         /**
          * 自动化测试实现
          */
-        protected $frameLoop(): void {
+        private $onEnterFrame(): void {
             let protocalNotified: boolean = false;
 
             while (this.$actions.length > 0) {
@@ -230,7 +234,7 @@ module suntdd {
                 suncom.Test.assertTrue(packet.state === MSWSStateEnum.CLOSE || packet.state === MSWSStateEnum.ERROR, `当前网络己连接，仅允许下行CLOSE或ERROR状态`);
             }
             this.facade.sendNotification(NotifyKey.TEST_WEBSOCKET_STATE, packet.state);
-            return TestActionResultEnum.COMPLETE & TestActionResultEnum.SUSPEND;
+            return TestActionResultEnum.COMPLETE | TestActionResultEnum.SUSPEND;
         }
 
         /**
