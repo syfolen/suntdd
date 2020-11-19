@@ -23,7 +23,7 @@ module test {
             }), false, true);
             this.$wait(3, suncom.Handler.create(this, (x: number, y: number) => {
                 console.log("recv 3, x:" + x, ", y:" + y);
-            }), false, false);
+            }, void 0, false), false, false);
             this.$emit(3, void 0, 3000);
             this.$emit(3, [1, 2], 1000);
             this.$emit(3);

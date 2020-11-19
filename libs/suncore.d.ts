@@ -183,91 +183,13 @@ declare module suncore {
     }
 
     /**
-     * MsgQ消息体接口
-     */
-    interface IMsgQMsg {
-        /**
-         * 响应消息的模块
-         */
-        dst: MsgQModEnum;
-
-        /**
-         * 消息编号
-         */
-        id: number;
-
-        /**
-         * 消息挂载的数据
-         */
-        data: any;
-    }
-
-    /**
-     * 服务接口（主要用于逻辑层架构）
-     * 说明：
-     * 1. 每个服务均有独立的生命周期。
-     * 2. 服务被设计用来处理与表现层无关的有状态业务。
-     */
-    interface IService {
-        /**
-         * 服务是否正在运行
-         */
-        readonly running: boolean;
-
-        /**
-         * 服务启动入口
-         */
-        run(): void;
-
-        /**
-         * 服务停止接口
-         */
-        stop(): void;
-    }
-
-    /**
-     * 任务接口
-     * 说明：
-     * 1. Task必定为MMI层对象，这是不可更改的
-     * 2. Task一旦开始则不允许取消，可直接设置done为true来强制结束
-     * 3. Task对象有自己的生命周期管理机制，故不建议在外部持有
-     */
-    interface ITask {
-        /**
-         * 是否己完成
-         * 说明：
-         * 1. 请勿重写此getter和setter函数，否则可能会出问题
-         */
-        done: boolean;
-
-        /**
-         * 是否正在运行
-         */
-        readonly running: boolean;
-
-        /**
-         * 执行函数
-         * @return: 为true时表示任务立刻完成
-         */
-        run(): boolean;
-
-        /**
-         * 任务被取消
-         * 说明：
-         * 1. 当消息因时间轴停止而被清理时，此方法会被自动执行，用于清理Task内部的数据
-         * 2. 当done被设置为true时，此方法亦会被执行，请知悉
-         */
-        cancel(): void;
-    }
-
-    /**
      * 任务抽象类
      * 说明：
      * 1. Task必定为MMI层对象，这是不可更改的
      * 2. Task一旦开始则不允许取消，可直接设置done为true来强制结束
      * 3. Task对象有自己的生命周期管理机制，故不建议在外部持有
      */
-    abstract class AbstractTask extends puremvc.Notifier implements ITask {
+    abstract class AbstractTask extends puremvc.Notifier {
         /**
          * 任务是否己经完成（内置属性，请勿操作）
          */
@@ -311,7 +233,7 @@ declare module suncore {
      * 1. 每个服务均有独立的生命周期。
      * 2. 服务被设计用来处理与表现层无关的有状态业务。
      */
-    abstract class BaseService extends puremvc.Notifier implements IService {
+    abstract class BaseService extends puremvc.Notifier {
         /**
          * 服务是否己启动（内置属性，请勿操作）
          */
@@ -363,7 +285,7 @@ declare module suncore {
         /**
          * 处理MsgQ消息
          */
-        protected abstract $dealMsgQMsg(msg: IMsgQMsg): void;
+        protected abstract $dealMsgQMsg(id: number, data: any): void;
     }
 
     /**
@@ -383,7 +305,7 @@ declare module suncore {
      */
     class SimpleTask extends AbstractTask {
 
-        constructor(handler: suncom.IHandler);
+        constructor(handler: suncom.Handler);
 
         /**
          * 执行函数
@@ -517,7 +439,7 @@ declare module suncore {
          * 说明：
          * 1. 自定义的groupId的值不允许超过1000
          */
-        function addTask(mod: ModuleEnum, groupId: number, task: ITask): number;
+        function addTask(mod: ModuleEnum, groupId: number, task: AbstractTask): number;
 
         /**
          * 取消任务
@@ -527,12 +449,12 @@ declare module suncore {
         /**
          * 添加触发器
          */
-        function addTrigger(mod: ModuleEnum, delay: number, handler: suncom.IHandler): void;
+        function addTrigger(mod: ModuleEnum, delay: number, handler: suncom.Handler): void;
 
         /**
          * 添加消息
          */
-        function addMessage(mod: ModuleEnum, priority: MessagePriorityEnum, handler: suncom.IHandler): void;
+        function addMessage(mod: ModuleEnum, priority: MessagePriorityEnum, handler: suncom.Handler): void;
 
         /**
          * 添加自定义定时器
