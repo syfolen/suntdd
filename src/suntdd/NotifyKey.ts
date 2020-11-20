@@ -12,7 +12,7 @@ module suntdd {
         export const EMIT: string = "suntdd.NotifyKey.EMIT";
 
         /**
-         * 等待信号 { id: number, handler: suncom.IHandler, line: boolean, once: boolean }
+         * 等待信号 { id: number, handler: suncom.Handler, line: boolean, once: boolean }
          * @line: 是否进入队列
          */
         export const WAIT: string = "suntdd.NotifyKey.WAIT";
