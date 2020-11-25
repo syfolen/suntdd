@@ -26,7 +26,7 @@ module suntdd {
             super(0);
             this.$caseId = caseId;
             M.currentTestCase = this;
-            suncore.System.addMessage(suncore.ModuleEnum.SYSTEM, suncore.MessagePriorityEnum.PRIORITY_0, suncom.Handler.create(this, this.$doPrepare));
+            suncore.System.addMessage(suncore.ModuleEnum.SYSTEM, suncore.MessagePriorityEnum.PRIORITY_0, this, this.$doPrepare);
         }
 
         /**
