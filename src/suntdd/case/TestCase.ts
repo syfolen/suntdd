@@ -103,7 +103,7 @@ module suntdd {
          * @once: 是否只响应一次，若line为true，则once必然为true，默认为：true
          * export
          */
-        protected $wait(id: number, handler: suncom.Handler = null, line: boolean = true, once: boolean = true): void {
+        protected $wait(id: number, handler: suncom.IHandler = null, line: boolean = true, once: boolean = true): void {
             if (line === true) {
                 once = true;
             }

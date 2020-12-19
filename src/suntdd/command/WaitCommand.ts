@@ -9,7 +9,7 @@ module suntdd {
          * @line: 是否进入队列
          * @once: 是否只响应一次
          */
-        execute(id: number, handler: suncom.Handler, line: boolean, once: boolean): void {
+        execute(id: number, handler: suncom.IHandler, line: boolean, once: boolean): void {
             const cfg: IWaitCfg = {
                 id: id,
                 handler: handler,

@@ -12,7 +12,7 @@ module suntdd {
         /**
          * 回调执行器
          */
-        handler: suncom.Handler;
+        handler: suncom.IHandler;
 
         /**
          * 是否在队列中

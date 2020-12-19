@@ -38,7 +38,7 @@ module suntdd {
                     if (item.canceled === true) {
                         continue;
                     }
-                    const handler: suncom.Handler = item.handler || null;
+                    const handler: suncom.IHandler = item.handler || null;
                     if (handler === null) {
                         continue;
                     }
